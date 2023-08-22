@@ -1,0 +1,145 @@
+# turbotech-
+#include <Servo.h>
+#include <Arduino.h>
+#include <Adafruit_MotorShield.h>
+
+/*
+//M1
+Adafruit_MotorShield AFMS = Adafruit_MotorShield();
+Adafruit_DCMotor *motor1 = AFMS.getMotor(3);  // M1
+*/
+
+#include <Adafruit_LiquidCrystal.h>
+Adafruit_LiquidCrystal lcd_1(0);
+int seconds = 0;
+
+const int motorPinT = 3; 
+
+//CONTADOR//
+int C=0; 
+Servo servo_2; //Servo motor.
+//Delantero//
+const int echoPin = 22;   // ECHO del primer sensor
+const int pingPin = 23;   // TRING del primer sensor
+
+//Derecha//
+const int echoPin2 = 26;  // ECHO del segundo sensor
+const int pingPin2 = 27;  // TRING del segundo sensor
+
+//Izquierda//
+const int echoPin3 = 30; // ECHO del tercer sensor
+const int pingPin3 = 31; // TRING del tercer sensor
+
+const int echoPin4 = 12; // ECHO del tercer sensor
+const int pingPin4 = 13; // TRING del tercer sensor
+
+
+void setup()
+{
+  Serial.begin(9600);
+  servo_2.attach(2);
+  //AFMS.begin();
+  pinMode(motorPinT, OUTPUT); 
+}
+
+void loop()
+{
+
+  analogWrite(motorPinT, 255); 
+  //analogWrite(motorPinT, 0); //Sirve para apagar el motor. 
+
+
+  long duration, inches, cm1, cm2, cm3;
+  // Primer sensor
+  pinMode(pingPin, OUTPUT);
+  digitalWrite(pingPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(pingPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(pingPin, LOW);
+  pinMode(echoPin, INPUT);
+  duration = pulseIn(echoPin, HIGH);
+  inches = microsecondsToInches(duration);
+  cm1 = microsecondsToCentimeters(duration);
+  
+  Serial.print("Sensor 1: ");
+  Serial.print(inches);
+  Serial.print("in, ");
+  Serial.print(cm1);
+  Serial.print("cm");
+  Serial.println();
+
+  // Segundo sensor
+  pinMode(pingPin2, OUTPUT);
+  digitalWrite(pingPin2, LOW);
+  delayMicroseconds(2);
+  digitalWrite(pingPin2, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(pingPin2, LOW);
+  pinMode(echoPin2, INPUT);
+  duration = pulseIn(echoPin2, HIGH);
+  inches = microsecondsToInches(duration);
+  cm2 = microsecondsToCentimeters(duration);
+  
+  Serial.print("Sensor 2: ");
+  Serial.print(inches);
+  Serial.print("in, ");
+  Serial.print(cm2);
+  Serial.print("cm");
+  Serial.println();
+
+    // Tercer sensor
+  pinMode(pingPin3, OUTPUT);
+  digitalWrite(pingPin3, LOW);
+  delayMicroseconds(2);
+  digitalWrite(pingPin3, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(pingPin3, LOW);
+  pinMode(echoPin3, INPUT);
+  duration = pulseIn(echoPin3, HIGH);
+  inches = microsecondsToInches(duration);
+  cm3 = microsecondsToCentimeters(duration);
+  
+  Serial.print("Sensor 3: ");
+  Serial.print(inches);
+  Serial.print("in, ");
+  Serial.print(cm3);
+  Serial.print("cm");
+  Serial.println();
+
+//Giro derecha 130. 
+//Giro izquierda 40. 
+//Centro 85.
+
+  if (cm1 < 50 && cm3 > 50) {
+    servo_2.write(45); //Giro izquirda.
+    C = C+1; 
+    //Serial.print("CONTADOR: "); 
+    //Serial.println(C); 
+  }
+  else if (cm1 < 50 && cm2 > 50) { 
+    servo_2.write(130); //Giro derecha. 
+    C = C+1; 
+    //Serial.print("CONTADOR: "); 
+    //Serial.println(C); 
+  }
+  else if (C = 12) {
+    //analogWrite(motorPinT, 0); 
+  }
+  else {//(cm2 < 50 && cm3 < 50 && cm1 > 50) {
+    servo_2.write(85); //Recto. 
+  }
+ 
+  //servo_2.write(85);//Grado 45 es,
+  delay(2000);
+  servo_2.write(85);//Grado 45 es, 
+
+}
+
+long microsecondsToInches(long microseconds) {
+  return microseconds / 74 / 2;
+}
+
+long microsecondsToCentimeters(long microseconds) {
+  return microseconds / 29 / 2;
+}
